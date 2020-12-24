@@ -29,10 +29,26 @@ const optionDefinitions = [
 var args = commandLineArgs(optionDefinitions);
 
 
+var numMessagesSent = 0;
+var numMessagesReceived = 0;
+var openConnections = new Set();
+var numErrors = 0;
+
+
+setInterval(() => {
+    console.log("Messages sent: " + numMessagesSent + " messages received: " + numMessagesReceived + " connections: " + openConnections.size + " errors: " + numErrors)
+}, 10000);
+
 console.log('starting connections: ' + args.connections);
-for (var i = 0; i < args.connections; i++) {
-    var container = container.create_container();
-    container.connect({
+
+function createSendReceiverWorker() {
+    console.log('createSendReceiverWorker');
+    if (openConnections.size >= (args.connections -1)) {
+        return
+    }
+
+    var ctn = container.create_container();
+    ctn.connect({
         port: args.port,
         host: args.host,
         rejectUnauthorized: false,
@@ -41,35 +57,62 @@ for (var i = 0; i < args.connections; i++) {
         transport: 'tls'
     });
 
-    container.on('connection_open', function (context) {
+    ctn.on('connection_open', function (context) {
         context.connection.open_receiver(args.node);
         context.connection.open_sender(args.node);
+        openConnections.add(context.connection)
+        createSendReceiverWorker();
     });
 
-    container.on('message', function (context) {
-        console.log(context.message);
+    // ctn.on('connection_close', function (context) {
+    //     console.log("connection_close")
+    //     numConnections -= 1;
+    //     createSendReceiverWorker();
+    // });
+
+    ctn.on('disconnected', function (context) {
+        console.log("disconnected : " + context.reconnecting)
+        if (!context.reconnecting) {
+            openConnections.delete(context.connection)
+            createSendReceiverWorker();
+        }
     });
 
-    container.on('error', function (error) {
+    ctn.on('message', function (context) {
+        //console.log(context.message);
+        numMessagesReceived += 1;
+    });
+
+    ctn.on('error', function (error) {
         console.log(error);
+        numErrors += 1;
     });
 
-    container.on('sendable', function (context) {
+    ctn.on('sendable', function (context) {
         if (args.sendContinually) {
             while (context.sender.sendable()) {
                 context.sender.send({
-                    message_id: container.generate_uuid()
+                    message_id: ctn.generate_uuid()
                 });
+                numMessagesSent += 1;
             }
-        } else {
+        }
+    });
+
+    ctn.on('sender_open', function (context) {
+        if (!args.sendContinually) {
             setInterval(() => {
                 if (context.sender.sendable()) {
                     context.sender.send({
-                        message_id: container.generate_uuid()
+                        message_id: ctn.generate_uuid()
                     });
+                    numMessagesSent += 1;
                 }
             }, 10000);
         }
     });
+    return ctn;
 }
+
+createSendReceiverWorker();
 
