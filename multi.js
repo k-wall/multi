@@ -18,6 +18,7 @@ var commandLineArgs = require('command-line-args')
 var container = require('rhea');
 
 
+
 const optionDefinitions = [
     {name: 'node', alias: 'n', type: String},
     {name: 'host', alias: 'h', type: String},
@@ -49,6 +50,9 @@ for (var i = 0; i < args.connections; i++) {
         console.log(context.message);
     });
 
+    container.on('error', function (error) {
+        console.log(error);
+    });
 
     container.on('sendable', function (context) {
         if (args.sendContinually) {
