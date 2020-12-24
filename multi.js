@@ -19,32 +19,53 @@ var container = require('rhea');
 
 
 const optionDefinitions = [
-  { name: 'node', alias: 'n', type: String },
-  { name: 'host', alias: 'h', type: String },
-  { name: 'port', alias: 'p', type: Number },
-  { name: 'connections', alias: 'c', type: Number, defaultOption: 1},
+    {name: 'node', alias: 'n', type: String},
+    {name: 'host', alias: 'h', type: String},
+    {name: 'port', alias: 'p', type: Number},
+    {name: 'connections', alias: 'c', type: Number, defaultValue: 1},
+    {name: 'sendContinually', alias: 's', type: Boolean, defaultValue: false},
 ];
 var args = commandLineArgs(optionDefinitions);
 
-container.on('connection_open', function (context) {
-    context.connection.open_receiver(args.node);
-    context.connection.open_sender(args.node);
-});
-
-container.on('message', function (context) {
-    console.log(context.message);
-});
-
-
-container.on('sendable', function (context) {
-    while (context.sender.sendable()) {
-        context.sender.send({
-            message_id: container.generate_uuid()});
-    }
-});
 
 console.log('starting connections: ' + args.connections);
 for (var i = 0; i < args.connections; i++) {
-    container.connect({port: args.port, host: args.host, rejectUnauthorized: false, username: 'guest', password: 'guest', transport:'tls'});
+    var container = container.create_container();
+    container.connect({
+        port: args.port,
+        host: args.host,
+        rejectUnauthorized: false,
+        username: 'guest',
+        password: 'guest',
+        transport: 'tls'
+    });
+
+    container.on('connection_open', function (context) {
+        context.connection.open_receiver(args.node);
+        context.connection.open_sender(args.node);
+    });
+
+    container.on('message', function (context) {
+        console.log(context.message);
+    });
+
+
+    container.on('sendable', function (context) {
+        if (args.sendContinually) {
+            while (context.sender.sendable()) {
+                context.sender.send({
+                    message_id: container.generate_uuid()
+                });
+            }
+        } else {
+            setInterval(() => {
+                if (context.sender.sendable()) {
+                    context.sender.send({
+                        message_id: container.generate_uuid()
+                    });
+                }
+            }, 10000);
+        }
+    });
 }
 
