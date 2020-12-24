@@ -1,0 +1,39 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: multi
+  labels:
+    app: multi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: multi
+  template:
+    metadata:
+      labels:
+        app: multi
+    spec:
+      containers:
+      - name: mutli
+        image: quay.io/k_wall/multi:latest
+        env:
+        - name: FOO
+          value: BAR
+        - name: XNODE_DEBUG
+          value: "*"
+        command: 
+        - node
+        args:
+        - /usr/src/app/multi.js
+        - --host
+        - messaging-queuespace-enmasse-infra.apps-crc.testing
+        - --port
+        - "443"
+        - --node
+        - myqueue1
+        - --connections
+        - "10"
+
+
+

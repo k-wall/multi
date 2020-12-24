@@ -1,0 +1,14 @@
+{
+  "name": "mutli",
+  "version": "1.0.0",
+  "description": "multi connection load test",
+  "author": "kwall@apache.org",
+  "main": "multi.js",
+  "scripts": {
+    "start": "node multi.js"
+  },
+  "dependencies": {
+    "command-line-args": "^5.1.1",
+    "rhea": "^1.0.24"
+  }
+}
