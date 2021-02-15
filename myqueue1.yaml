@@ -1,0 +1,9 @@
+apiVersion: enmasse.io/v1beta1
+kind: Address
+metadata:
+  name: queue-space.myqueue1
+  addressSpace: standard
+spec:
+  address: myqueue1
+  type: queue
+  plan: standard-small-queue

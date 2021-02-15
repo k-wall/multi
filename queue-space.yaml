@@ -1,0 +1,11 @@
+apiVersion: enmasse.io/v1beta1
+kind: AddressSpace
+metadata:
+  annotations:
+    enmasse.io/infra-uuid: queuespace
+  name: queue-space
+spec:
+  authenticationService:
+    name: none-authservice
+  plan: standard-medium
+  type: standard

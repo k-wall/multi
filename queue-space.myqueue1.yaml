@@ -1,0 +1,43 @@
+apiVersion: enmasse.io/v1beta1
+kind: Address
+metadata:
+  annotations:
+    addressSpace: queue-space
+    enmasse.io/applied-configuration: '{"addressSpec":{"address":"myqueue1","type":"queue","plan":"standard-small-queue"}}'
+    enmasse.io/version: 0.33-SNAPSHOT
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"enmasse.io/v1beta1","kind":"Address","metadata":{"addressSpace":"standard","annotations":{},"name":"queue-space.myqueue1","namespace":"enmasse-infra"},"spec":{"address":"myqueue1","plan":"standard-small-queue","type":"queue"}}
+  generation: 1
+  managedFields:
+  - apiVersion: enmasse.io/v1beta1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:status:
+        f:isReady: {}
+        f:messages: {}
+    manager: okhttp
+    operation: Update
+    time: "2020-12-30T16:42:44Z"
+  name: queue-space.myqueue1
+  selfLink: /apis/enmasse.io/v1beta1/namespaces/enmasse-infra/addresses/queue-space.myqueue1
+spec:
+  address: myqueue1
+  plan: standard-small-queue
+  type: queue
+status:
+  brokerStatuses:
+  - clusterId: broker-queuespace-fzwf
+    containerId: broker-queuespace-fzwf-0
+    state: Active
+  isReady: false
+  messages:
+  - 'Address myqueue1 is missing active autoLink (active in dirs: [])'
+  phase: Active
+  planStatus:
+    name: standard-small-queue
+    partitions: 1
+    resources:
+      broker: 0.01
+      router: 0.001
+  subscription:
+    maxConsumers: 1

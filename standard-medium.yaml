@@ -1,0 +1,40 @@
+apiVersion: admin.enmasse.io/v1beta2
+kind: AddressSpacePlan
+metadata:
+  name: standard-medium
+spec:
+  addressPlans:
+  - standard-small-anycast
+  - standard-medium-anycast
+  - standard-large-anycast
+  - standard-small-multicast
+  - standard-medium-multicast
+  - standard-large-multicast
+  - standard-small-queue
+  - standard-medium-queue
+  - standard-large-queue
+  - standard-xlarge-queue
+  - standard-small-partitioned-queue
+  - standard-medium-partitioned-queue
+  - standard-large-partitioned-queue
+  - standard-small-topic
+  - standard-medium-topic
+  - standard-large-topic
+  - standard-xlarge-topic
+  - standard-small-subscription
+  - standard-medium-subscription
+  - standard-large-subscription
+  - standard-deadletter
+  addressSpaceType: standard
+  displayName: Medium
+  displayOrder: 0
+  infraConfigRef: default
+  longDescription: Messaging infrastructure based on Apache Qpid Dispatch Router and
+    Apache ActiveMQ Artemis. This plan allows up to 3 routers and 3 broker in total,
+    and is suitable for applications using small address plans and few addresses.
+  resourceLimits:
+    aggregate: 50
+    broker: 25
+    router: 25
+  shortDescription: Messaging infrastructure based on Apache Qpid Dispatch Router
+    and Apache ActiveMQ Artemis.

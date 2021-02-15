@@ -1,0 +1,21 @@
+apiVersion: admin.enmasse.io/v1beta1
+kind: StandardInfraConfig
+metadata:
+  name: default
+spec:
+  admin:
+    resources:
+      memory: 3Gi
+  broker:
+    addressFullPolicy: FAIL
+    globalMaxSize: 64Mb
+    maxUnavailable: 1
+    resources:
+      memory: 1Gi
+      storage: 2Gi
+  router:
+    linkCapacity: 250
+    maxUnavailable: 1
+    minReplicas: 2
+    resources:
+      memory: 4Gi

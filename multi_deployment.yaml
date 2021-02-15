@@ -18,8 +18,8 @@ spec:
       - name: mutli
         image: quay.io/k_wall/multi:latest
         env:
-        - name: FOO
-          value: BAR
+        - name: DEBUGX
+          value: rhea:events
         - name: XNODE_DEBUG
           value: "*"
         command: 
@@ -27,13 +27,13 @@ spec:
         args:
         - /usr/src/app/multi.js
         - --host
-        - messaging-queuespace-enmasse-infra.apps-crc.testing
+        - messaging-queuespace.enmasse-infra.svc
         - --port
-        - "443"
+        - "5671"
         - --node
         - myqueue1
         - --connections
-        - "10"
+        - "50"
 
 
 
